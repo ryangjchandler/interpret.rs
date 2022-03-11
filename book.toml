@@ -1,0 +1,6 @@
+[book]
+authors = ["Ryan Chandler"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Writing an Interpreter in Rust"
