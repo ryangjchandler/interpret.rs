@@ -2,7 +2,9 @@
 
 Both of our interpreter architectures will implement the same language. For simplicity, we'll be implementing a language that looks a lot like JavaScript.
 
-Below is a small block of code that demonstrates all of the features our language will have:
+You can name your language anything you like. This book will refer to the language as SimpleScript.
+
+Below is a small block of code that demonstrates some of SimpleScript's features:
 
 ```js
 // This is a variable declaration.
