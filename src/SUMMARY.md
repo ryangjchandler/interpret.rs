@@ -10,3 +10,4 @@
 # Setup
 
 - [Creating a Cargo project](./setup/creating-a-cargo-project.md)
+- [Installing LALRPOP](./setup/installing-lalrpop.md)
