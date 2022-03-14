@@ -12,3 +12,4 @@
 - [What is a parser?](./parsing/what-is-a-parser.md)
 - [Installing LALRPOP](./parsing/installing-lalrpop.md)
 - [Your first node](./parsing/your-first-node.md)
+- [Parsing a "let" statement](./parsing/parsing-a-let-statement.md)

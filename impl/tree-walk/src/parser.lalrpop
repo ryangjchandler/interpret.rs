@@ -1,0 +1,28 @@
+use crate::ast::*;
+
+grammar;
+
+pub Program: Vec<Statement> = {
+    // <statements:Statement*> => statements,
+}
+
+// Statement: Statement = {
+//     "let" <name:Identifier> "=" <value:Expression> => Statement::Let { name, value },
+// }
+
+// Expression: Expression = {
+//     <s:StringLiteral> => Expression::StringLiteral(s),
+// }
+
+// Identifier: String = {
+//     <i:r"[a-zA-Z_]+"> => i.to_string(),
+// }
+
+// StringLiteral: String = {
+//     <s:r##""[^"]*""##> => s.trim_matches('"').to_string(),
+// }
+
+// match {
+//     r"\s*" => {},
+//     _
+// }
