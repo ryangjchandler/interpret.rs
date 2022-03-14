@@ -74,11 +74,13 @@ Following the same logic as the `Statement` enumeration, we can define an `Expre
 ```rust,ignore
 #[derive(Debug)]
 pub enum Expression {
-    StringLiteral { s: String },
+    StringLiteral(String),
 }
 ```
 
-We'll support the simplest of expressions for now. The `StringLiteral` variant is able to hold a `String` on the `s` field of the variant.
+We'll support the simplest of expressions for now. The `StringLiteral` variant is able to hold a `String`.
+
+The main difference in syntax here is that our `Expression` is going to be a "tuple" enumeration, as opposed to a "struct" enumeration. The arguments and values for each value won't be stored under named fields. To access them, we'll instead have to pattern match later on and interact with them that way.
 
 ### Adding a value to the `Let` variant
 
