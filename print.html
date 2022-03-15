@@ -1,0 +1,555 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Writing an Interpreter in Rust</title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="VRBABWHG" defer></script>
+<!-- / Fathom -->        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="the-language.html"><strong aria-hidden="true">2.</strong> The Language</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="setup/creating-a-cargo-project.html"><strong aria-hidden="true">3.</strong> Creating a Cargo project</a></li><li class="chapter-item expanded affix "><li class="part-title">Parsing</li><li class="chapter-item expanded "><a href="parsing/what-is-a-parser.html"><strong aria-hidden="true">4.</strong> What is a parser?</a></li><li class="chapter-item expanded "><a href="parsing/installing-lalrpop.html"><strong aria-hidden="true">5.</strong> Installing LALRPOP</a></li><li class="chapter-item expanded "><a href="parsing/your-first-node.html"><strong aria-hidden="true">6.</strong> Your first node</a></li><li class="chapter-item expanded "><a href="parsing/parsing-a-let-statement.html"><strong aria-hidden="true">7.</strong> Parsing a &quot;let&quot; statement</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Writing an Interpreter in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<h2 id="welcome"><a class="header" href="#welcome">Welcome!</a></h2>
+<p>In this book, we'll cover the basics of writing an interpreter with Rust. The book will (eventually) cover 2 different architectural approaches:</p>
+<ol>
+<li>Tree-walk interpreter</li>
+<li>Bytecode machine</li>
+</ol>
+<h3 id="required-knowledge"><a class="header" href="#required-knowledge">Required knowledge</a></h3>
+<p>This book assumes you have a basic understanding of Rust, so you don't need to be an expert.</p>
+<p>If you know how to write a function and a struct, you'll be good to go. There's no doubt you'll learn some things along the way.</p>
+<h2 id="credit"><a class="header" href="#credit">Credit</a></h2>
+<p>The content in this book is heavily inspired by <a href="https://interpreterbook.com/">Writing an Interpreter in Go</a> and <a href="https://craftinginterpreters.com/">Crafting Interpreters</a>.</p>
+<p>Both books use languages other than Rust, but I definitely recommend checking them out. The overall concepts are the same and can be applied in most, if not all, languages.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="the-language"><a class="header" href="#the-language">The Language</a></h1>
+<p>Both of our interpreter architectures will implement the same language. For simplicity, we'll be implementing a language that looks a lot like JavaScript.</p>
+<p>You can name your language anything you like. This book will refer to the language as SimpleScript.</p>
+<p>Below is a small block of code that demonstrates some of SimpleScript's features:</p>
+<pre><code class="language-js">// This is a variable declaration.
+let name = &quot;Ryan&quot;;
+
+// This is a function definition.
+function fib(n) {
+    // Conditionals are simple.
+    if n &lt; 2 {
+        return n;
+    } else {
+        // Returns are explicit.
+        return fib(n - 1) + fib(n - 2);
+    }
+}
+
+// Function invocation looks like any C-style language.
+fib(30);
+</code></pre>
+<p>Here's a simpler list of things that are language will be able to do:</p>
+<ul>
+<li>Declare global variables, as well as local variables.</li>
+<li>Define functions that can be called / invoked.</li>
+<li>Conditional statements (<code>if</code>)</li>
+<li>Loops (<code>while</code>)</li>
+<li>Generic mathematical operations (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>)</li>
+</ul>
+<p>Our language will also have the following data types:</p>
+<ul>
+<li><code>number</code> - represents both integers and 64-bit floating-point decimals.</li>
+<li><code>string</code></li>
+<li><code>bool</code></li>
+<li><code>array</code> - a list of values of any type.</li>
+<li><code>null</code></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="creating-a-cargo-project"><a class="header" href="#creating-a-cargo-project">Creating a Cargo project</a></h1>
+<p>To start working on our interpreter, we need to do some setup. Let's create a Rust project and make sure we can build an executable binary.</p>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<p>Before continuing, you'll need to have Rust installed on your machine. I'm going to cover the steps here, since they've been well documented elsewhere.</p>
+<p>If you haven't got Cargo and Rust installed, I recommend reading the <a href="https://www.rust-lang.org/tools/install">Install Rust</a> page on the official Rust website.</p>
+<h2 id="creating-the-project"><a class="header" href="#creating-the-project">Creating the project</a></h2>
+<p>Open a terminal window and create a new Cargo project.</p>
+<pre><code class="language-bash">cargo new simplescript
+</code></pre>
+<p>This will create a directory named <code>simplescript</code>. Enter the directory.</p>
+<pre><code class="language-bash">cd simplescript
+</code></pre>
+<p>To double check that everything is setup correctly, run the following command in the project directory:</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<p>With any luck, you'll see <code>Hello, world!</code> printed in your terminal window.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="what-is-a-parser"><a class="header" href="#what-is-a-parser">What is a parser?</a></h1>
+<p>If you did a computer science course at university, chances are you've spent a decent amount of time learning about parsers. If that's you, feel free to skip over this chapter.</p>
+<p>If you <em>don't</em> know what a parser is, keep on reading. I'll do my best to explain things simply.</p>
+<h2 id="tokens"><a class="header" href="#tokens">Tokens</a></h2>
+<p>Essentially every programming language begins by breaking your code down into tokens.</p>
+<p>Let's assume we have a JavaScript-like language.</p>
+<pre><code class="language-js">let name = &quot;Ryan&quot;;
+</code></pre>
+<p>We naturally give each word and character in the code a name. We'd call <code>let</code> a <strong>keyword</strong>, <code>name</code> would be an <strong>identifier</strong> and <code>&quot;Ryan&quot;</code> would be a <strong>string</strong>.</p>
+<p>The names we assign to each word and character are known as of token types.</p>
+<pre><code class="language-php">T_LET       &quot;let&quot;
+T_IDENT     &quot;name&quot;
+T_ASSIGN    &quot;=&quot;
+T_STRING    &quot;Ryan&quot;
+</code></pre>
+<p>Keywords tend to have more specific names than <code>T_KEYWORD</code>. This becomes useful when we start processing our stream of tokens.</p>
+<h2 id="parsing"><a class="header" href="#parsing">Parsing</a></h2>
+<p>Once the code has been broken down into a list of tokens, we can start processing and analysing the tokens. </p>
+<p>A parser will look at each token in our source and generate a formal data structure to represent the logical structure and flow of our program.</p>
+<p>The simplest of parsers will look at the current token and make some assertions on the next token in the list. Using the code example from above, we can use the flowchart below to demonstrate our logic.</p>
+<pre><code class="language-mermaid">flowchart TD;
+    T_LET[Found T_LET] --&gt; IS_T_IDENT[Is it an identifier?]
+    IS_T_IDENT --&gt;|No?| ERROR_T_IDENT[Error, expected T_IDENT]
+    IS_T_IDENT --&gt;|Yes?| READ_T_IDENT[Store identifier]
+    READ_T_IDENT --&gt; READ_NEXT_T[Read next token]
+    READ_NEXT_T --&gt;|No?| EXIT_EARLY_ASSIGN[Early return, no default value]
+    READ_NEXT_T --&gt;|Yes?| READ_T_ASSIGN[Skip T_ASSIGN]
+    READ_T_ASSIGN --&gt; EXPECT_EXPRESSION[Has value after T_ASSIGN?]
+    EXPECT_EXPRESSION --&gt;|No?| ERROR_EXPR[Error, expected value after T_ASSIGN]
+    EXPECT_EXPRESSION --&gt;|Yes?| READ_VALUE[Parse value and store]
+</code></pre>
+<p>This is a high-level description of how a parser, well, parses. After each token, it checks a couple of conditions and determines what the next move is.</p>
+<p>At any point in time, the parser could find a problem. This is when you'll come across <em>&quot;Parse error&quot;</em> or similar in your favourite programming languages.</p>
+<p>Once the parser has analysed all of the tokens, it will return a tree structure that represents the logical flow of your program. This is called an <strong>Abstract Syntax-Tree</strong> (AST).</p>
+<p>At the top-level, an AST is a list of top-level <strong>nodes</strong>. Each nodes is a different piece of logic in the program.</p>
+<p>A node can also store other nodes. This is more common when looking at conditional logic, such as the code that executes when an <code>if</code> statement's condition evaluates to <code>true</code>. </p>
+<p>If we were to represent our <code>let</code> statement as a node, using JSON, it would probably look like this:</p>
+<pre><code class="language-json">{
+    &quot;type&quot;: &quot;LetStatement&quot;,
+    &quot;name&quot;: &quot;name&quot;,
+    &quot;value&quot;: {
+        &quot;type&quot;: &quot;StringLiteral&quot;,
+        &quot;value&quot;: &quot;Ryan&quot;,
+    },
+    &quot;line&quot;: 1
+}
+</code></pre>
+<p>Our <code>LetStatement</code> node stores a <code>name</code> and <code>value</code>, both of which were retrieved by the parser in the flowchart above. What's special about the <code>value</code> key is that it stores another node. Our code set the value of the <code>name</code> variable to <code>Ryan</code> which is a <code>StringLiteral</code>.</p>
+<h3 id="parser-generators"><a class="header" href="#parser-generators">Parser generators</a></h3>
+<p>If you've done any amount of research into programming language design and development, you've likely come across this term before.</p>
+<p>Parser generators are specialised tools that normally provide their own domain-specific language for writing a parser. You use a specialised grammar to define the tokens and structures in your code and the parser generator will generate a parser for you in your host language, i.e. Rust.</p>
+<p>We'll actually be using a parser generator (<a href="https://github.com/lalrpop/lalrpop">LALRPOP</a>) in this book to get started with our tree-walk interpreter. Once we have a good amount of test coverage, we'll come back and replace it with a custom parser.</p>
+<p>Parser generators can save you a lot of time when developing a programming language - there are plenty of hugely popular languages that still use them to this day. The argument between using one of these generator tools or writing your parser is controversial, like most things in programming. I would generally recommend starting with a parser generator and moving to a hand-written one when the potential performance benefits and control are truly beneficial.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installing-lalrpop"><a class="header" href="#installing-lalrpop">Installing LALRPOP</a></h1>
+<p>As mentioned in <a href="parsing/../parsing/what-is-a-parser.html">&quot;What is a parser?&quot;</a>, we'll start off by using <a href="https://github.com/lalrpop/lalrpop">LALRPOP</a> to generate a parser for our language.</p>
+<p>LALRPOP is an <code>LR(1)</code> parser generator for Rust. The term <code>LR(1)</code> simply means that the parser will only ever lookahead for a single terminal / pattern.</p>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<p>To get started, you'll need to add the following dependencies to your project's Cargo.toml file.</p>
+<pre><code class="language-toml">[build-dependencies]
+lalrpop = &quot;0.19.7&quot;
+
+[dependencies]
+lalrpop-util = &quot;0.19.7&quot;
+regex = &quot;1&quot;
+</code></pre>
+<blockquote>
+<p>If you've already made a start and added other dependencies, be sure to merge them correctly.</p>
+</blockquote>
+<h2 id="build-scripts"><a class="header" href="#build-scripts">Build scripts</a></h2>
+<p>Cargo provides a complete build system for your Rust projects. One of the main features is the ability to execute build scripts before the compilation of your project.</p>
+<p>LALRPOP uses a build script to process your grammar file and output valid Rust code for use in our interpreter.</p>
+<p>You can create a build script by placing a <code>build.rs</code> file in the <strong>root</strong> of the project.</p>
+<pre><code class="language-rust ignore">extern crate lalrpop;
+
+fn main() {
+    lalrpop::process_root().unwrap();
+}
+</code></pre>
+<p>The <code>extern crate</code> declaration instructs Rust to import the <code>lalrpop</code> module defined in our <code>[build-dependencies]</code>.</p>
+<p>LALRPOP then provides a helper function that processes a grammar file in our project. The result of this is unwrapped to ensure any errors bubble up and cause the build script to fail.</p>
+<h2 id="the-grammar-file"><a class="header" href="#the-grammar-file">The grammar file</a></h2>
+<p>Right now, LALRPOP doesn't have anything to process. Let's fix that by creating an empty <code>src/parser.lalrpop</code> file in your project.</p>
+<p>With an empty file in place, you can run your project (<code>cargo run</code>) and see an error in the console.</p>
+<pre><code>Caused by:
+  process didn't exit successfully: `/Users/ryan/path/target/debug/build/book-d2c25b48ff14d1e7/build-script-build` (exit status: 1)
+  --- stdout
+  processing file `/Users/ryan/path/src/parser.lalrpop`
+  /Users/ryan/path/src/parser.lalrpop:1:1: 1:0 error: unexpected end of file
+</code></pre>
+<p>We can see that LALRPOP is trying to process our grammar file but it doesn't actually have anything to process. Good stuff!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="your-first-node"><a class="header" href="#your-first-node">Your first node</a></h1>
+<p>Let's start creating the data structures for your abstract syntax tree. We need to do this now so that we have something to return from our LALRPOP parser.</p>
+<p>First we should probably differentiate between the 2 types of &quot;node&quot; in our language - <strong>statements</strong> and <strong>expressions</strong>.</p>
+<h2 id="what-is-a-statement"><a class="header" href="#what-is-a-statement">What is a statement?</a></h2>
+<p>In programming, a statement is a block or sequence of code that executes but <strong>does not</strong> return a value.</p>
+<p>A good example is a function definition:</p>
+<pre><code class="language-javascript">function hello() {
+    // ...
+}
+</code></pre>
+<p>The above function definition will be executed by our interpreter, but it won't produce a value of any kind. It instead has a side-effect on the execution environment (we'll cover this in a later chapter).</p>
+<h2 id="what-is-an-expression"><a class="header" href="#what-is-an-expression">What is an expression?</a></h2>
+<p>An expression is also a block or sequence of code that <strong>does</strong> produce a value. Any time you run <code>1 + 2</code>, the programming language will evaluate that code and tell you that the value is <code>3</code>. Expressions can be used to create new values and retrieve existing ones.</p>
+<p>A lot of programming languages also allow you to use expressions as statements. The value that gets produced by that expression is never used and is discarded by the interpreter.</p>
+<h2 id="the-ast-module"><a class="header" href="#the-ast-module">The <code>ast</code> module</a></h2>
+<p>We'll be separating our code into modules from the get-go. This will save us a lot of refactoring work later on and it's just a good practice to follow.</p>
+<p>Create an empty <code>src/ast.rs</code> file in your project. The <code>ast</code> module will store all of the code related to our abstract-syntax tree.</p>
+<p>The new module will also need to be registered with our crate. Update your <code>src/main.rs</code> with the following code:</p>
+<pre><code class="language-rust ignore">mod ast;
+
+fn main() {
+    println!(&quot;Hello, world!&quot;);
+}
+</code></pre>
+<p>With this in place, the <code>ast</code> module can be access as <code>crate::ast</code> from anywhere inside of our project. Awesome!</p>
+<h2 id="the-statement-enumeration"><a class="header" href="#the-statement-enumeration">The <code>Statement</code> enumeration</a></h2>
+<p>Every top-level piece of code in SimpleScript will be a <code>Statement</code>. This will allow us to interpret declarations, definitions and also simpler expressions such as function calls.</p>
+<p>We'll represent this as an <code>enum</code> in Rust, since we'll have multiple types of <code>Statement</code> and Rust doesn't have an object-oriented model for inheritance. Rust's <code>enum</code> types are also unique as they allow you to created &quot;tagged unions&quot;.</p>
+<p>If you've programmed in other low-level languages such as C, you've likely come across the <code>union</code> keyword before. Rust allows you to define variants on an <code>enum</code> that contain and hold their own pieces of data. That can either be in the form of <code>struct</code>-like variant or a tuple.</p>
+<blockquote>
+<p>For more information about Rust's &quot;tagged unions&quot;, I recommend reading <a href="https://tonyarcieri.com/a-quick-tour-of-rusts-type-system-part-1-sum-types-a-k-a-tagged-unions">this excellent article by Tony Arcieri</a>.</p>
+</blockquote>
+<p>For clarity and readability, we'll be using the <code>struct</code> form for our variants. Let's start by creating the <code>enum</code> and adding a variant to store the data for our <code>LetStatement</code> from a previous chapter.</p>
+<pre><code class="language-rust ignore">#[derive(Debug)]
+pub enum Statement {
+    Let {
+        name: String,
+    }
+}
+</code></pre>
+<blockquote>
+<p>The <code>Debug</code> derive-macro will be added to the majority of data types in SimpleScript. It will allow us to debug any problems we encounter in the future.</p>
+</blockquote>
+<p>The <code>Statement</code> enumeration now has a single <code>Let</code> variant. This variant is able to store a <code>String</code>, accessible as <code>name</code>. Of course, our <code>Let</code> statements won't just be storing the name of the identifier. We'll also need to store the default value for the variable too.</p>
+<h2 id="the-expression-enumeration"><a class="header" href="#the-expression-enumeration">The <code>Expression</code> enumeration</a></h2>
+<p>Following the same logic as the <code>Statement</code> enumeration, we can define an <code>Expression</code> data type to store all of our expressions.</p>
+<pre><code class="language-rust ignore">#[derive(Debug)]
+pub enum Expression {
+    StringLiteral(String),
+}
+</code></pre>
+<p>We'll support the simplest of expressions for now. The <code>StringLiteral</code> variant is able to hold a <code>String</code>.</p>
+<p>The main difference in syntax here is that our <code>Expression</code> is going to be a &quot;tuple&quot; enumeration, as opposed to a &quot;struct&quot; enumeration. The arguments and values for each value won't be stored under named fields. To access them, we'll instead have to pattern match later on and interact with them that way.</p>
+<h3 id="adding-a-value-to-the-let-variant"><a class="header" href="#adding-a-value-to-the-let-variant">Adding a value to the <code>Let</code> variant</a></h3>
+<p>With the <code>Expression</code> enumeration in place, we can add a new <code>value</code> field to <code>Statement::Let</code> that will provide the default value for the variable.</p>
+<pre><code class="language-rust ignore">#[derive(Debug)]
+pub enum Statement {
+    Let {
+        name: String,
+        value: Expression,
+    }
+}
+</code></pre>
+<p>If you look back at a previous chapter, you'll remember that our flowchart didn't always expect an initial value for a variable. If the parser doesn't find a <code>=</code> token after the identifier, it just ends the statement.</p>
+<p>Most dynamic languages will initialise the value of this variable to <code>null</code> or <code>nil</code>. This is exactly what SimpleScript will do.</p>
+<p>However there are 2 ways to do this:</p>
+<ol>
+<li>Store an <code>Expression::Null</code> variant inside of <code>value</code>.</li>
+<li>Make <code>value</code> an <code>Option</code> instead.</li>
+</ol>
+<p>Since it's more idiomatic and &quot;correct&quot;, we'll opt for an <code>Option</code> type. If an initial value isn't found by our parser, we can set the <code>value = None</code> instead of a <code>::Null</code> expression.</p>
+<pre><code class="language-rust ignore"><span class="boring">#[derive(Debug)]
+</span><span class="boring">pub enum Statement {
+</span>    Let {
+        name: String,
+        value: Option&lt;Expression&gt;,
+    }
+<span class="boring">}
+</span></code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="parsing-a-let-statement"><a class="header" href="#parsing-a-let-statement">Parsing a &quot;let&quot; statement</a></h1>
+<blockquote>
+<p><strong>Warning</strong>: This chapter is quite long and covers a lot of LALRPOP-specific stuff. There's absolutely no harm in reading things multiple times!</p>
+</blockquote>
+<p>Now that we have a <code>Statement</code> and <code>Expression</code> type, we can start telling LALRPOP how to parse our <code>let</code> statements.</p>
+<p>To do this, we need to provide LALRPOP with a syntactical representation of the statement. This involves adding some grammar rules to the <code>parser.lalrpop</code> file and including some Rust code.</p>
+<p>LALRPOP needs to know where all of our data types are coming from. Luckily, we can mix a little bit of Rust code in with our grammar. Just like we would in Rust, we need to import our <code>ast</code> module into the LALRPOP file.</p>
+<pre><code class="language-rust ignore">use crate::ast::*;
+
+grammar;
+</code></pre>
+<p>We'll do a wildcard import so that we can reference our data-types with their basename, instead of prefixing them with <code>ast::</code>.</p>
+<p>With the <code>ast</code> module imported, we need to let LALRPOP know what structures should be exposed. We do this by defining a list of patterns that needs to be matched in our source code.</p>
+<p>The parser will produce a series of <code>Statement</code> variants that represent our <code>Program</code>. To keep the terminology consistent, we can say that LALRPOP needs to return a <code>Program</code> or <code>Vec&lt;Statement&gt;</code> (vector of <code>Statement</code> variants).</p>
+<pre><code class="language-rust ignore">pub Program: Vec&lt;Statement&gt; = {
+
+}
+</code></pre>
+<p>LALRPOP's grammar looks a lot like Rust's. This is a good thing since we'll be embedding Rust code inside of the grammar file too, just like we did for the <code>use</code> statement.</p>
+<p>The code above is telling LALRPOP to expose a parser that returns a <code>Vec&lt;Statement&gt;</code>. When LALRPOP generates it's own Rust code for us to use, it will generate a <code>ProgramParser</code> structure that accepts a <code>&amp;str</code> of source code and returns our defined output type.</p>
+<p>If you try to <code>cargo run</code> your project now, the LALRPOP error will disappear and you'll see the default <code>Hello, world!</code> message. Yay for progress!</p>
+<h2 id="defining-a-pattern"><a class="header" href="#defining-a-pattern">Defining a pattern</a></h2>
+<p>Right now, LALRPOP doesn't <em>actually</em> return anything. It knows how to generate the code, but since we're not interacting with the parser yet our program will compile and execute without any errors.</p>
+<p>Each LALRPOP declaration (grammar rule) is assigned a map of <code>pattern =&gt; result</code> pairs. You can think of it like a <code>match</code> expression. On the left-hand side of the <code>=&gt;</code>, we'll define the pattern that we're looking for and on the right-hand side, we'll return a value.</p>
+<p>To do this though, we need to tell LALRPOP what a <code>Statement</code> is. We can add the following code after the <code>Program</code> block.</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+
+}
+</code></pre>
+<p>The code here is telling LALRPOP to create a new private set of patterns called <code>Statement</code>. This set of patterns is always expected to return one of our <code>ast::Statement</code> variants. We'll be able to reference this set of patterns from elsewhere in our LALRPOP grammar, mainly the <code>Program</code> block.</p>
+<p>The reason we have omitted the <code>pub</code> at the beginning of the definition is because we won't need to parse individual <code>Statement</code> patterns from our program. LALRPOP is handling that for us by returning <code>Vec</code> of them from <code>Program</code>.</p>
+<p>To make LALRPOP return a vector of <code>Statement</code> variants from <code>Program</code>, we need to give it a <code>pattern =&gt; result</code> expression. Back in our <code>Program</code> block, we can add the following code:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub Program: Vec&lt;Statement&gt; = {
+    &lt;statements:Statement*&gt; =&gt; statements,
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Let's break it down again. The left-hand side is the pattern we're looking for and the right-hand side is the result of that pattern.</p>
+<p>The <code>&lt;statements:Statement*&gt;</code> pattern is very similar to a capture-group in a regular expression. Each of these capture groups can be given a name and a sub-pattern to match against. The name will be <code>statements</code> and the pattern we're looking for is <code>Statement*</code>. A more generalised description would be <code>&lt;name:pattern&gt;</code>.</p>
+<p>The pattern here references the <code>Statement</code> definition we setup a minute ago. The trailing <code>*</code> (asterisk) is referred to as a &quot;macro&quot; in LALRPOP. It instructs the parser to look for <strong>0 or more</strong> patterns that match the <code>Statement</code> definition. LALRPOP knows that it's looking for (potentially) multiple matches, so it will wrap them up into a <code>Vec</code> for us.</p>
+<p>Let's go back and update the <code>Statement</code> definition to actually match against something, starting with the simplest <code>let</code> statement possible:</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+    &quot;let&quot; &lt;name:Identifier&gt; =&gt; Statement::Let { name: name, value: None }
+}
+</code></pre>
+<p>We've introduced a new concept here and that is matching against literal strings. LALRPOP comes with it's own tokenizer / lexer which means we don't need to hand write all of our token logic. Instead, we can tell LALRPOP to look for certain strings but not to capture them. This is really helpful when starting on a new programming language since you don't need to worry about tokens at all. You can just provide a string and carry on.</p>
+<p>You might have noticed the <code>Identifier</code> type here too. Before we carry on, let's also add this definition to our grammar file.</p>
+<pre><code class="language-rust ignore">Identifier: String = {
+    &lt;i:r&quot;[a-zA-Z_]+&quot;&gt; =&gt; i.to_string(),
+}
+</code></pre>
+<p>Instead of specifying a grammar definition in the capture group, we're using a regular-expression string instead. We don't need to store this anywhere since we won't be using it again, we'll be using the new <code>Identifier</code> definition instead.</p>
+<p>The right-hand side is literal Rust code. The capture group will create a variable using the name we provide (<code>i</code>) and we can interact with it like we would anywhere else in our Rust code.</p>
+<p>The capture group will extract a <code>&amp;str</code> (string slice) from our source code. We want a <code>String</code> so we can move it around without lifetimes, hence the <code>.to_string()</code> call.</p>
+<p>Looking back up at <code>Statement</code>, we now know that the <code>name</code> capture group will store a <code>String</code> inside of the variable <code>name</code>.</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+    &quot;let&quot; &lt;name:Identifier&gt; =&gt; Statement::Let { name: name, value: None }
+}
+</code></pre>
+<p>We'll save the <code>value</code> parsing for now, that'll be in the next chapter. </p>
+<p>The right-hand side of our pseudo match clause shows some more Rust code. We're parsing out a <code>let</code> statement so we need to construct a <code>Let</code> variant.</p>
+<p>Again, it's all just Rust code. We know we have a <code>name</code> variable so we can assign that to the <code>name</code> field of the variant. We're ignoring the value for now, so we'll assign <code>None</code>.</p>
+<p>Both our field and variable have the same name, so we can get even fancier and allow Rust to implictly do the assignment for us by removing the <code>: name</code> part.</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+    &quot;let&quot; &lt;name:Identifier&gt; =&gt; Statement::Let { name, value: None }
+}
+</code></pre>
+<p>That's all it takes to parse out the simplest <code>let</code> statement in SimpleScript. Well, not quite...</p>
+<p>We haven't actually tried parsing anything yet. Let's update the <code>src/main.rs</code> file to parse out a static string (for now).</p>
+<pre><code class="language-rust ignore">mod ast;
+
+#[macro_use]
+extern crate lalrpop_util;
+
+lalrpop_mod!(parser);
+
+fn main() {
+    let ast = parser::ProgramParser::new()
+        .parse(&quot;let foo&quot;)
+        .unwrap();
+
+    dbg!(ast);
+}
+</code></pre>
+<p>There's quite a bit of new logic here. Let's go through it bit-by-bit:</p>
+<pre><code class="language-rust ignore">#[macro_use]
+extern crate lalrpop_util;
+</code></pre>
+<p>By defaut Rust macros are scoped to the crate / module they're defined in. By decorating the import with <code>#[macro_use]</code>, we're instructing Rust to take the macros from the module and make them available to the current context.</p>
+<pre><code class="language-rust ignore">lalrpop_mod!(parser);
+</code></pre>
+<p>The <code>#[macro_use]</code> then exposes a new <code>lalrpop_mod!()</code> macro. This macro handles all of the magic of creating a Rust module at compile-time. When LALRPOP processes our grammar file, this macro takes the generated Rust code and exports all of the definitions marked <code>pub</code>.</p>
+<p>The argument to the macro is the name of the module we'd like to create. We'll use <code>parser</code> to keep things simple but you can call it whatever you like, as long as you change all of the references in this book.</p>
+<p>You don't need to know <em>how</em> it does it, just what it exports.</p>
+<pre><code class="language-rust ignore">fn main() {
+    let ast = parser::ProgramParser::new()
+        .parse(&quot;let foo&quot;)
+        .unwrap();
+
+    dbg!(ast);
+}
+</code></pre>
+<p>We've told LALRPOP to create a <code>parser</code> module, so we can now interact with our <code>ProgramParser</code> that we defined in the grammar file. We create a new instance of it with the static <code>::new()</code> method and tell it to <code>.parse()</code> out a string.</p>
+<p>It only knows how to parse <code>let</code> statements, so that's all we'll send through for now. The <code>.parse()</code> method returns a <code>Result&lt;Vec&lt;Statement&gt;, lalrpop_util::ParseError&gt;</code> so it needs to be unwrapped to retrieve the AST.</p>
+<blockquote>
+<p>We'll take a look at nicer error reporting later on, this will do for now.</p>
+</blockquote>
+<p>Finally, we can dump out the generated AST with the <code>dbg!</code> macro since we added <code>#[Debug]</code> to our node structures.</p>
+<p>If you run this code, you should see some output in the terminal:</p>
+<pre><code class="language-bash">[src/main.rs:13] ast = [
+    Let {
+        name: &quot;foo&quot;,
+        value: None,
+    },
+]
+</code></pre>
+<p>This means we've successfully parsed a <code>let</code> statement with LALRPOP. Give yourself a pat on the back, you did good!</p>
+<p>With that done, we should probably write some tests! Let's write our tests in the <code>src/main.rs</code> file for now, we can move them around later on.</p>
+<pre><code class="language-rust ignore">#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::*;
+
+    fn expect_ast(code: &amp;str, expected: Vec&lt;Statement&gt;) {
+        assert_eq!(
+            parser::ProgramParser::new().parse(code).unwrap(),
+            expected
+        );
+    }
+
+    #[test]
+    fn it_can_parse_a_simple_let_statement() {
+        expect_ast(&quot;let foo&quot;, vec![
+            Statement::Let {
+                name: String::from(&quot;foo&quot;),
+                value: None,
+            }
+        ]);
+    }
+}
+</code></pre>
+<p>The <code>expect_ast()</code> helper function tidies this up a little bit. We're just asserting that the output from the parser matches that of our expected output.</p>
+<p>For this to work, you'll also need to add the <code>PartialEq</code> derive to both the <code>ast::Statement</code> and <code>ast::Expression</code> enumerations, since we're doing comparisons inside of the helper function.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="mermaid.min.js"></script>
+        <script type="text/javascript" src="mermaid-init.js"></script>
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+    </body>
+</html>

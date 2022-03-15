@@ -1,0 +1,320 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Parsing a &quot;let&quot; statement - Writing an Interpreter in Rust</title>
+        <!-- Custom HTML head -->
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="VRBABWHG" defer></script>
+<!-- / Fathom -->        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../the-language.html"><strong aria-hidden="true">2.</strong> The Language</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="../setup/creating-a-cargo-project.html"><strong aria-hidden="true">3.</strong> Creating a Cargo project</a></li><li class="chapter-item expanded affix "><li class="part-title">Parsing</li><li class="chapter-item expanded "><a href="../parsing/what-is-a-parser.html"><strong aria-hidden="true">4.</strong> What is a parser?</a></li><li class="chapter-item expanded "><a href="../parsing/installing-lalrpop.html"><strong aria-hidden="true">5.</strong> Installing LALRPOP</a></li><li class="chapter-item expanded "><a href="../parsing/your-first-node.html"><strong aria-hidden="true">6.</strong> Your first node</a></li><li class="chapter-item expanded "><a href="../parsing/parsing-a-let-statement.html" class="active"><strong aria-hidden="true">7.</strong> Parsing a &quot;let&quot; statement</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Writing an Interpreter in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="parsing-a-let-statement"><a class="header" href="#parsing-a-let-statement">Parsing a &quot;let&quot; statement</a></h1>
+<blockquote>
+<p><strong>Warning</strong>: This chapter is quite long and covers a lot of LALRPOP-specific stuff. There's absolutely no harm in reading things multiple times!</p>
+</blockquote>
+<p>Now that we have a <code>Statement</code> and <code>Expression</code> type, we can start telling LALRPOP how to parse our <code>let</code> statements.</p>
+<p>To do this, we need to provide LALRPOP with a syntactical representation of the statement. This involves adding some grammar rules to the <code>parser.lalrpop</code> file and including some Rust code.</p>
+<p>LALRPOP needs to know where all of our data types are coming from. Luckily, we can mix a little bit of Rust code in with our grammar. Just like we would in Rust, we need to import our <code>ast</code> module into the LALRPOP file.</p>
+<pre><code class="language-rust ignore">use crate::ast::*;
+
+grammar;
+</code></pre>
+<p>We'll do a wildcard import so that we can reference our data-types with their basename, instead of prefixing them with <code>ast::</code>.</p>
+<p>With the <code>ast</code> module imported, we need to let LALRPOP know what structures should be exposed. We do this by defining a list of patterns that needs to be matched in our source code.</p>
+<p>The parser will produce a series of <code>Statement</code> variants that represent our <code>Program</code>. To keep the terminology consistent, we can say that LALRPOP needs to return a <code>Program</code> or <code>Vec&lt;Statement&gt;</code> (vector of <code>Statement</code> variants).</p>
+<pre><code class="language-rust ignore">pub Program: Vec&lt;Statement&gt; = {
+
+}
+</code></pre>
+<p>LALRPOP's grammar looks a lot like Rust's. This is a good thing since we'll be embedding Rust code inside of the grammar file too, just like we did for the <code>use</code> statement.</p>
+<p>The code above is telling LALRPOP to expose a parser that returns a <code>Vec&lt;Statement&gt;</code>. When LALRPOP generates it's own Rust code for us to use, it will generate a <code>ProgramParser</code> structure that accepts a <code>&amp;str</code> of source code and returns our defined output type.</p>
+<p>If you try to <code>cargo run</code> your project now, the LALRPOP error will disappear and you'll see the default <code>Hello, world!</code> message. Yay for progress!</p>
+<h2 id="defining-a-pattern"><a class="header" href="#defining-a-pattern">Defining a pattern</a></h2>
+<p>Right now, LALRPOP doesn't <em>actually</em> return anything. It knows how to generate the code, but since we're not interacting with the parser yet our program will compile and execute without any errors.</p>
+<p>Each LALRPOP declaration (grammar rule) is assigned a map of <code>pattern =&gt; result</code> pairs. You can think of it like a <code>match</code> expression. On the left-hand side of the <code>=&gt;</code>, we'll define the pattern that we're looking for and on the right-hand side, we'll return a value.</p>
+<p>To do this though, we need to tell LALRPOP what a <code>Statement</code> is. We can add the following code after the <code>Program</code> block.</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+
+}
+</code></pre>
+<p>The code here is telling LALRPOP to create a new private set of patterns called <code>Statement</code>. This set of patterns is always expected to return one of our <code>ast::Statement</code> variants. We'll be able to reference this set of patterns from elsewhere in our LALRPOP grammar, mainly the <code>Program</code> block.</p>
+<p>The reason we have omitted the <code>pub</code> at the beginning of the definition is because we won't need to parse individual <code>Statement</code> patterns from our program. LALRPOP is handling that for us by returning <code>Vec</code> of them from <code>Program</code>.</p>
+<p>To make LALRPOP return a vector of <code>Statement</code> variants from <code>Program</code>, we need to give it a <code>pattern =&gt; result</code> expression. Back in our <code>Program</code> block, we can add the following code:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub Program: Vec&lt;Statement&gt; = {
+    &lt;statements:Statement*&gt; =&gt; statements,
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Let's break it down again. The left-hand side is the pattern we're looking for and the right-hand side is the result of that pattern.</p>
+<p>The <code>&lt;statements:Statement*&gt;</code> pattern is very similar to a capture-group in a regular expression. Each of these capture groups can be given a name and a sub-pattern to match against. The name will be <code>statements</code> and the pattern we're looking for is <code>Statement*</code>. A more generalised description would be <code>&lt;name:pattern&gt;</code>.</p>
+<p>The pattern here references the <code>Statement</code> definition we setup a minute ago. The trailing <code>*</code> (asterisk) is referred to as a &quot;macro&quot; in LALRPOP. It instructs the parser to look for <strong>0 or more</strong> patterns that match the <code>Statement</code> definition. LALRPOP knows that it's looking for (potentially) multiple matches, so it will wrap them up into a <code>Vec</code> for us.</p>
+<p>Let's go back and update the <code>Statement</code> definition to actually match against something, starting with the simplest <code>let</code> statement possible:</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+    &quot;let&quot; &lt;name:Identifier&gt; =&gt; Statement::Let { name: name, value: None }
+}
+</code></pre>
+<p>We've introduced a new concept here and that is matching against literal strings. LALRPOP comes with it's own tokenizer / lexer which means we don't need to hand write all of our token logic. Instead, we can tell LALRPOP to look for certain strings but not to capture them. This is really helpful when starting on a new programming language since you don't need to worry about tokens at all. You can just provide a string and carry on.</p>
+<p>You might have noticed the <code>Identifier</code> type here too. Before we carry on, let's also add this definition to our grammar file.</p>
+<pre><code class="language-rust ignore">Identifier: String = {
+    &lt;i:r&quot;[a-zA-Z_]+&quot;&gt; =&gt; i.to_string(),
+}
+</code></pre>
+<p>Instead of specifying a grammar definition in the capture group, we're using a regular-expression string instead. We don't need to store this anywhere since we won't be using it again, we'll be using the new <code>Identifier</code> definition instead.</p>
+<p>The right-hand side is literal Rust code. The capture group will create a variable using the name we provide (<code>i</code>) and we can interact with it like we would anywhere else in our Rust code.</p>
+<p>The capture group will extract a <code>&amp;str</code> (string slice) from our source code. We want a <code>String</code> so we can move it around without lifetimes, hence the <code>.to_string()</code> call.</p>
+<p>Looking back up at <code>Statement</code>, we now know that the <code>name</code> capture group will store a <code>String</code> inside of the variable <code>name</code>.</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+    &quot;let&quot; &lt;name:Identifier&gt; =&gt; Statement::Let { name: name, value: None }
+}
+</code></pre>
+<p>We'll save the <code>value</code> parsing for now, that'll be in the next chapter. </p>
+<p>The right-hand side of our pseudo match clause shows some more Rust code. We're parsing out a <code>let</code> statement so we need to construct a <code>Let</code> variant.</p>
+<p>Again, it's all just Rust code. We know we have a <code>name</code> variable so we can assign that to the <code>name</code> field of the variant. We're ignoring the value for now, so we'll assign <code>None</code>.</p>
+<p>Both our field and variable have the same name, so we can get even fancier and allow Rust to implictly do the assignment for us by removing the <code>: name</code> part.</p>
+<pre><code class="language-rust ignore">Statement: Statement = {
+    &quot;let&quot; &lt;name:Identifier&gt; =&gt; Statement::Let { name, value: None }
+}
+</code></pre>
+<p>That's all it takes to parse out the simplest <code>let</code> statement in SimpleScript. Well, not quite...</p>
+<p>We haven't actually tried parsing anything yet. Let's update the <code>src/main.rs</code> file to parse out a static string (for now).</p>
+<pre><code class="language-rust ignore">mod ast;
+
+#[macro_use]
+extern crate lalrpop_util;
+
+lalrpop_mod!(parser);
+
+fn main() {
+    let ast = parser::ProgramParser::new()
+        .parse(&quot;let foo&quot;)
+        .unwrap();
+
+    dbg!(ast);
+}
+</code></pre>
+<p>There's quite a bit of new logic here. Let's go through it bit-by-bit:</p>
+<pre><code class="language-rust ignore">#[macro_use]
+extern crate lalrpop_util;
+</code></pre>
+<p>By defaut Rust macros are scoped to the crate / module they're defined in. By decorating the import with <code>#[macro_use]</code>, we're instructing Rust to take the macros from the module and make them available to the current context.</p>
+<pre><code class="language-rust ignore">lalrpop_mod!(parser);
+</code></pre>
+<p>The <code>#[macro_use]</code> then exposes a new <code>lalrpop_mod!()</code> macro. This macro handles all of the magic of creating a Rust module at compile-time. When LALRPOP processes our grammar file, this macro takes the generated Rust code and exports all of the definitions marked <code>pub</code>.</p>
+<p>The argument to the macro is the name of the module we'd like to create. We'll use <code>parser</code> to keep things simple but you can call it whatever you like, as long as you change all of the references in this book.</p>
+<p>You don't need to know <em>how</em> it does it, just what it exports.</p>
+<pre><code class="language-rust ignore">fn main() {
+    let ast = parser::ProgramParser::new()
+        .parse(&quot;let foo&quot;)
+        .unwrap();
+
+    dbg!(ast);
+}
+</code></pre>
+<p>We've told LALRPOP to create a <code>parser</code> module, so we can now interact with our <code>ProgramParser</code> that we defined in the grammar file. We create a new instance of it with the static <code>::new()</code> method and tell it to <code>.parse()</code> out a string.</p>
+<p>It only knows how to parse <code>let</code> statements, so that's all we'll send through for now. The <code>.parse()</code> method returns a <code>Result&lt;Vec&lt;Statement&gt;, lalrpop_util::ParseError&gt;</code> so it needs to be unwrapped to retrieve the AST.</p>
+<blockquote>
+<p>We'll take a look at nicer error reporting later on, this will do for now.</p>
+</blockquote>
+<p>Finally, we can dump out the generated AST with the <code>dbg!</code> macro since we added <code>#[Debug]</code> to our node structures.</p>
+<p>If you run this code, you should see some output in the terminal:</p>
+<pre><code class="language-bash">[src/main.rs:13] ast = [
+    Let {
+        name: &quot;foo&quot;,
+        value: None,
+    },
+]
+</code></pre>
+<p>This means we've successfully parsed a <code>let</code> statement with LALRPOP. Give yourself a pat on the back, you did good!</p>
+<p>With that done, we should probably write some tests! Let's write our tests in the <code>src/main.rs</code> file for now, we can move them around later on.</p>
+<pre><code class="language-rust ignore">#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ast::*;
+
+    fn expect_ast(code: &amp;str, expected: Vec&lt;Statement&gt;) {
+        assert_eq!(
+            parser::ProgramParser::new().parse(code).unwrap(),
+            expected
+        );
+    }
+
+    #[test]
+    fn it_can_parse_a_simple_let_statement() {
+        expect_ast(&quot;let foo&quot;, vec![
+            Statement::Let {
+                name: String::from(&quot;foo&quot;),
+                value: None,
+            }
+        ]);
+    }
+}
+</code></pre>
+<p>The <code>expect_ast()</code> helper function tidies this up a little bit. We're just asserting that the output from the parser matches that of our expected output.</p>
+<p>For this to work, you'll also need to add the <code>PartialEq</code> derive to both the <code>ast::Statement</code> and <code>ast::Expression</code> enumerations, since we're doing comparisons inside of the helper function.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../parsing/your-first-node.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../parsing/your-first-node.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="../mermaid.min.js"></script>
+        <script type="text/javascript" src="../mermaid-init.js"></script>
+    </body>
+</html>
