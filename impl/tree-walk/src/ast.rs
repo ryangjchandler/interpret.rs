@@ -1,12 +1,12 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Statement {
     Let {
-        ident: String,
+        name: String,
         value: Option<Expression>,
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Expression {
     StringLiteral(String),
 }

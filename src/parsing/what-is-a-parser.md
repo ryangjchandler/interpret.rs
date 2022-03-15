@@ -63,7 +63,7 @@ If we were to represent our `let` statement as a node, using JSON, it would prob
 ```json
 {
     "type": "LetStatement",
-    "ident": "name",
+    "name": "name",
     "value": {
         "type": "StringLiteral",
         "value": "Ryan",
@@ -72,7 +72,7 @@ If we were to represent our `let` statement as a node, using JSON, it would prob
 }
 ```
 
-Our `LetStatement` node stores an `ident` and `value`, both of which were retrieved by the parser in the flowchart above. What's special about the `value` key is that it stores another node. Our code set the value of the `name` variable to `Ryan` which is a `StringLiteral`.
+Our `LetStatement` node stores a `name` and `value`, both of which were retrieved by the parser in the flowchart above. What's special about the `value` key is that it stores another node. Our code set the value of the `name` variable to `Ryan` which is a `StringLiteral`.
 
 ### Parser generators
 

@@ -58,14 +58,14 @@ For clarity and readability, we'll be using the `struct` form for our variants. 
 #[derive(Debug)]
 pub enum Statement {
     Let {
-        ident: String,
+        name: String,
     }
 }
 ```
 
 > The `Debug` derive-macro will be added to the majority of data types in SimpleScript. It will allow us to debug any problems we encounter in the future.
 
-The `Statement` enumeration now has a single `Let` variant. This variant is able to store a `String`, accessible as `ident`. Of course, our `Let` statements won't just be storing the name of the identifier. We'll also need to store the default value for the variable too.
+The `Statement` enumeration now has a single `Let` variant. This variant is able to store a `String`, accessible as `name`. Of course, our `Let` statements won't just be storing the name of the identifier. We'll also need to store the default value for the variable too.
 
 ## The `Expression` enumeration
 
@@ -90,7 +90,7 @@ With the `Expression` enumeration in place, we can add a new `value` field to `S
 #[derive(Debug)]
 pub enum Statement {
     Let {
-        ident: String,
+        name: String,
         value: Expression,
     }
 }
@@ -111,7 +111,7 @@ Since it's more idiomatic and "correct", we'll opt for an `Option` type. If an i
 # #[derive(Debug)]
 #pub enum Statement {
     Let {
-        ident: String,
+        name: String,
         value: Option<Expression>,
     }
 #}
